@@ -350,7 +350,7 @@ Reset_v2fly(){
 		rm -rf $config_folder/certbot
 		rm -rf $config_folder/tls-old
 		rm -f $folder/docker-compose.yml
-		rm -f $folder/info.conf && cp $config_folder/conf/info.conf $folder/info.conf
+		rm -f $folder/info.conf
 		echo && echo -e "${Info} 初始化已完成 !" && echo
 		cd ~
 		echo -e "${Tip} 请等待5秒..."
