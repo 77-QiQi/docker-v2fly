@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./data/nginx/conf.d:/etc/nginx/conf.d
+      - ./data/nginx/html:/usr/share/nginx/html
+      - ./logs/nginx:/var/log/nginx
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    ports:
+      - "80:80"
+      - "your_ports:443"
+    links:
+      - v2ray:v2ray #连接v2ray容器，映射主机名，此处非常重要，如果没有这个映射nginx就无法连接v2ray的websocket服务
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    restart: always
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  v2ray:
+    image: v2fly/v2fly-core:latest
+    container_name: v2ray
+    environment:
+      - TZ=Asia/Shanghai
+    restart: always
+    command: v2ray run -config=/etc/v2ray/config.json
+    volumes:
+      - ./data/v2ray:/etc/v2ray
+      - ./logs/v2ray:/var/log/v2ray
+    expose:
+      - "65035" #开放端口给容器，不对外开放
