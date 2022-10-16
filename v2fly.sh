@@ -109,6 +109,18 @@ Install_v2fly(){
 		fi
 	fi
 	echo
+	if [ $email != "unknown" ]; then
+	  	read -e -p "是否将邮箱地址与 EFF 共享？(默认:No):" yn
+	  	[[ -z "${yn}" ]] && yn="n"
+		if [[ $yn == [Yy] ]]; then
+		echo -e "${Info} 已同意与 EFF 共享邮箱地址，将会收到 EFF 推送的新闻、活动等资讯..."
+		share_email_address="yes"
+	  else
+	  	echo && echo -e "${Info} 已拒绝与 EFF 共享邮箱地址，将不会收到 EFF 推送的新闻、活动等资讯..."
+		share_email_address="no"
+		fi
+	  fi
+	echo
 	read -s -n1 -p "UUID已自动生成，按任意键继续..."
 
 	rm -f $folder/info.conf && cp $config_folder/conf/info.conf $folder/info.conf
@@ -120,6 +132,7 @@ Install_v2fly(){
 	sed -i "6s/v2ray/${paths}/" $folder/info.conf
 	sed -i "4s/your_uuid/${uuid}/" $folder/info.conf
 	sed -i "10s/your_email_address/${email}/" $folder/info.conf
+	sed -i "11s/no/${share_email_address}/" $folder/info.conf
 	sed -i "15s/your_uuid/${uuid}/" $config_folder/v2ray/config.json
 	sed -i "24s/v2ray/${paths}/" $config_folder/v2ray/config.json
 #	sed -i "/"id"/c\            '"id"': '"${uuid}"'," $config_folder/v2ray/config.json
@@ -234,6 +247,12 @@ Install_tls(){
 	  *) email_arg="--email $email" ;;
 	esac
 
+	# Share your e-mail address with EFF (default: No)
+	case "$share_email_address" in
+	  "no") share_arg="--no-eff-email" ;;
+	  *) share_arg="--eff-email" ;;
+	esac
+
 	# Enable staging mode if needed
 	if [ $staging != "0" ]; then staging_arg="--staging"; fi
 
@@ -241,6 +260,7 @@ Install_tls(){
 	  certbot certonly --webroot -w /var/www/certbot \
 	    $staging_arg \
 	    $email_arg \
+	    $share_arg \
 	    $domain_args \
 	    --rsa-key-size $rsa_key_size \
 	    --agree-tos \
@@ -385,6 +405,16 @@ Email_Setting(){
 		echo -e "${Info} 输入了不合法的邮箱，邮箱未修改成功 ..." && return 0
 		fi
 		fi
+	read -e -p "是否将邮箱地址与 EFF 共享？(默认:No):" yn
+	  [[ -z "${yn}" ]] && yn="n"
+	  if [[ $yn == [Yy] ]]; then
+	  	echo -e "${Info} 已同意与 EFF 共享邮箱地址，将会收到 EFF 推送的新闻、活动等资讯(申请/续订证书后生效) ..."
+	  	share_email="yes"
+	  else
+	  	echo && echo -e "${Info} 已拒绝与 EFF 共享邮箱地址，将不会收到 EFF 推送的新闻、活动等资讯(申请/续订证书后生效) ..."
+		share_email="no"
+	  fi
+	sed -i "11s/${share_email_address}/${share_email}/" $folder/info.conf
 	sed -i "10s/${email}/${new_email}/" $folder/info.conf
 	echo -e "${Info} 修改完成 ..."
 	return 0
