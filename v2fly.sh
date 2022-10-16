@@ -101,7 +101,12 @@ Install_v2fly(){
 	fi
 	read -r -p "请输入邮箱(eg:your@address.email):" email
 	if [ -z $email ];then
-	    echo -e "${Info} 没有输入邮箱..." && read -s -n1 -p "将自动跳过邮箱，按任意键继续..."
+	    echo -e "${Info} 没有输入邮箱..." && email="unknown" && read -s -n1 -p "将自动跳过邮箱，按任意键继续..."
+		else
+		mail=`echo $email | gawk '/^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/{print $0}'`
+		if [ ! -n "${mail}" ];then
+		echo -e "${Info} 输入了不合法的邮箱，将自动跳过 ..." && email="unknown"
+		fi
 	fi
 	echo
 	read -s -n1 -p "UUID已自动生成，按任意键继续..."
@@ -225,7 +230,7 @@ Install_tls(){
 
 	# Select appropriate email arg
 	case "$email" in
-	  "") email_arg="--register-unsafely-without-email" ;;
+	  "unknown") email_arg="--register-unsafely-without-email" ;;
 	  *) email_arg="--email $email" ;;
 	esac
 
@@ -266,6 +271,124 @@ Update_Service(){
 	cd ~
 	return 0
 }
+Update_Setting(){
+	[[ ! -e ${config_file} ]] && echo -e "${Error} 没有安装 v2fly ，请检查 !" && return 1
+	if ! [ -x "$(command -v docker-compose)" ]; then
+	  echo -e "${Error}: docker-compose is not installed." >&2
+	  return 1
+	fi
+	source $folder/info.conf
+	echo && echo -e "  你想修改什么？
+————————
+ ${Green_font_prefix}1.${Font_color_suffix} 修改 域名
+————————
+ ${Green_font_prefix}2.${Font_color_suffix} 修改 端口
+————————
+ ${Green_font_prefix}3.${Font_color_suffix} 修改 路径
+————————
+ ${Green_font_prefix}4.${Font_color_suffix} 修改 UUID
+————————
+ ${Green_font_prefix}5.${Font_color_suffix} 修改 邮箱" && echo
+	read -e -p "(默认: 取消):" cancel
+	[[ -z "${cancel}" ]] && echo -e "${Info}已取消..." && return 1
+	if [[ ${cancel} == "1" ]]; then
+		Domains_Setting
+	elif [[ ${cancel} == "2" ]]; then
+		Ports_Setting
+	elif [[ ${cancel} == "3" ]]; then
+		Paths_Setting
+	elif [[ ${cancel} == "4" ]]; then
+		uuid_Setting
+	elif [[ ${cancel} == "5" ]]; then
+		Email_Setting
+	else
+		echo -e "${Error} 请输入正确的数字(1-5)" && return 1
+	fi
+}
+Domains_Setting(){
+	read -r -p "请输入域名(当前域名:${domains}):" new_domains
+		if [ -z $new_domains ];then
+	    echo -e "${Error} 没有输入域名，已取消修改..." && return 0
+		fi
+	sed -i "s/${domains}/${new_domains}/" $folder/info.conf
+	sed -i "s/${domains}/${new_domains}/" $config_folder/nginx/conf.d/nginx.conf
+	sed -i "3s/${domains}/${new_domains}/" $folder/view_info.conf
+	rm -rf $config_folder/certbot
+	Install_tls
+	return 0
+}
+Ports_Setting(){
+	read -r -p "请输入端口号(当前默认端口:${ports}):" new_ports
+		if [ -z $new_ports ];then
+		echo -e "${Error} 没有输入端口，已取消修改..." && return 0
+		fi
+		if [[ $new_ports == "22" || $new_ports == "25" || $new_ports == "80" ]]; then
+		echo
+		echo -e "${Error} 端口不能为 22,25,80 ..." && return 0
+		fi
+	sed -i "3s/${ports}/${new_ports}/" $folder/info.conf
+	sed -i "16s/${ports}/${new_ports}/" $folder/docker-compose.yml
+	sed -i "4s/${ports}/${new_ports}/" $folder/view_info.conf
+	cd $folder
+	docker-compose up --force-recreate -d nginx v2ray
+	cd ~
+	return 0
+}
+Paths_Setting(){
+	read -r -p "请输入路径(当前路径:${paths}):" new_paths
+		if [ -z $new_paths ];then
+	    echo -e "${Error} 没有输入路径，已取消修改..." && return 0
+		fi
+		case $new_paths in
+	    *[/$]*)
+	    echo
+	    echo -e "${Error} 这个脚本太辣鸡了...所以路径不能包含 / 或 $ 这两个符号..."
+	    echo "----------------------------------------------------------------"
+	    return 0
+	    ;;
+	    esac
+	sed -i "6s/${paths}/${new_paths}/" $folder/info.conf
+	sed -i "24s/${paths}/${new_paths}/" $config_folder/v2ray/config.json
+	sed -i "33s/${paths}/${new_paths}/" $config_folder/nginx/conf.d/nginx.conf
+	sed -i "10s/${paths}/${new_paths}/" $folder/view_info.conf
+	cd $folder
+	docker-compose up --force-recreate -d nginx v2ray
+	cd ~
+	return 0
+}
+uuid_Setting(){
+	read -e -p "确认修改UUID？[y/N] :" yn
+	  [[ -z "${yn}" ]] && yn="n"
+	  if [[ $yn == [Yy] ]]; then
+	  	new_uuid="$(cat /proc/sys/kernel/random/uuid)"
+	  	echo
+	  	read -s -n1 -p "UUID已自动生成，按任意键继续..."
+		echo
+	  else
+		echo && echo -e "${Info} 默认不修改UUID" && return 0
+	  fi
+	sed -i "4s/${uuid}/${new_uuid}/" $folder/info.conf
+	sed -i "5s/${uuid}/${new_uuid}/" $folder/view_info.conf
+	sed -i "15s/${uuid}/${new_uuid}/" $config_folder/v2ray/config.json
+	cd $folder
+	docker-compose up --force-recreate -d nginx v2ray
+	cd ~
+	return 0
+}
+Email_Setting(){
+	read -r -p "请输入邮箱(当前邮箱:${email}):" new_email
+		if [ -z $new_email ];then
+	    echo -e "${Info} 没有输入邮箱..." && return 0
+		else
+		mail=`echo $new_email | gawk '/^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/{print $0}'`
+		if [ ! -n "${mail}" ];then
+		echo -e "${Info} 输入了不合法的邮箱，邮箱未修改成功 ..." && return 0
+		fi
+		fi
+	sed -i "10s/${email}/${new_email}/" $folder/info.conf
+	echo -e "${Info} 修改完成 ..."
+	return 0
+}
 Uninstall_v2fly(){
 	[[ ! -e ${config_folder} ]] && [[ ! -e ${config_file} ]] && echo -e "${Error} 没有安装 v2fly ，请检查 !" && return 1
 	echo "确定要 卸载 v2fly ？[y/N]" && echo
@@ -280,11 +403,7 @@ Uninstall_v2fly(){
 		echo -e "${Info} 移除容器..."
 		docker-compose down
 		echo -e "${Info} done..."
-		rm -f ${config_file}
-		rm -rf ${folder}/logs
-		rm -f ${folder}/info.conf
-		rm -f ${folder}/docker-compose.yml
-		rm -rf ${config_folder}/certbot
+		rm -rf ${folder}
 		echo -e "${Info} 开始移除 compose..."
 		rm -rf /usr/local/bin/docker-compose
 		echo -e "${Info} 开始移除 docker..."
@@ -347,6 +466,8 @@ Reset_v2fly(){
 		echo -e "${Info} done..."
 		rm -f ${config_file}
 		rm -rf $folder/logs
+		rm -rf $config_folder/v2ray/*
+		rm -rf $config_folder/nginx/conf.d/*
 		rm -rf $config_folder/certbot
 		rm -rf $config_folder/tls-old
 		rm -f $folder/docker-compose.yml
@@ -428,20 +549,21 @@ echo -e "  v2ray 一键管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_s
   ${Green_font_prefix}3.${Font_color_suffix} 卸载 v2fly
 ————————————
   ${Green_font_prefix}4.${Font_color_suffix} 查看 连接信息
-  ${Green_font_prefix}5.${Font_color_suffix} 续订 TLS证书
+  ${Green_font_prefix}5.${Font_color_suffix} 修改 连接信息
+  ${Green_font_prefix}6.${Font_color_suffix} 续订 TLS证书
 ————————————
-  ${Green_font_prefix}6.${Font_color_suffix} 停止 v2fly
-  ${Green_font_prefix}7.${Font_color_suffix} 重启 v2fly
+  ${Green_font_prefix}7.${Font_color_suffix} 停止 v2fly
+  ${Green_font_prefix}8.${Font_color_suffix} 重启 v2fly
 ————————————
-  ${Green_font_prefix}8.${Font_color_suffix} BBR 状态
-  ${Green_font_prefix}9.${Font_color_suffix} 更新 compose
+  ${Green_font_prefix}9.${Font_color_suffix} BBR 状态
+ ${Green_font_prefix}10.${Font_color_suffix} 更新 compose
 ————————————
- ${Green_font_prefix}10.${Font_color_suffix} 初始化 ...
- ${Green_font_prefix}11.${Font_color_suffix} 升级脚本 ...
+ ${Green_font_prefix}11.${Font_color_suffix} 初始化 ...
+ ${Green_font_prefix}12.${Font_color_suffix} 升级脚本 ...
  "
 echo -e "${Red_font_prefix} [注意：首次安装及卸载重装，请先执行安装依赖！] ${Font_color_suffix}"
 echo -e "${Red_font_prefix} [注意：初始化，将恢复至 v2fly 安装之前(依赖安装之后)的状态！] ${Font_color_suffix}"
-echo && read -e -p "请输入数字 [0-11]：" num
+echo && read -e -p "请输入数字 [0-12]：" num
 case "$num" in
 	0)
 	Installation_dependency
@@ -459,27 +581,30 @@ case "$num" in
 	View_connection_info
 	;;
 	5)
-	Renewals_v2fly
+	Update_Setting
 	;;
 	6)
-	Stop_v2fly
+	Renewals_v2fly
 	;;
 	7)
-	Restart_v2fly
+	Stop_v2fly
 	;;
 	8)
-	Configure_BBR
+	Restart_v2fly
 	;;
 	9)
-	Update_Compose
+	Configure_BBR
 	;;
 	10)
-	Reset_v2fly
+	Update_Compose
 	;;
 	11)
+	Reset_v2fly
+	;;
+	12)
 	Update_Shell
 	;;
 	*)
-	echo -e "${Error} 请输入正确的数字 [0-11]"
+	echo -e "${Error} 请输入正确的数字 [0-12]"
 	;;
 esac
