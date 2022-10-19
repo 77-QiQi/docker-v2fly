@@ -11,7 +11,7 @@ export PATH
 #=================================================
 
 sh_ver="1.0.0.1"
-Compose_ver="v2.11.2"
+Compose_ver="v2.12.0"
 PWD="/root"
 folder="$PWD/docker-v2fly"
 config_folder="$folder/data"
