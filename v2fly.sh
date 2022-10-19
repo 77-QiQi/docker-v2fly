@@ -110,7 +110,7 @@ Install_v2fly(){
 	fi
 	echo
 	if [ $email != "unknown" ]; then
-	  	read -e -p "是否将邮箱地址与 EFF 共享？(默认:No):" yn
+	  	read -e -p "是否将邮箱地址与 EFF 共享？(Y/N 默认:N):" yn
 	  	[[ -z "${yn}" ]] && yn="n"
 		if [[ $yn == [Yy] ]]; then
 		echo -e "${Info} 已同意与 EFF 共享邮箱地址，将会收到 EFF 推送的新闻、活动等资讯..."
@@ -405,7 +405,7 @@ Email_Setting(){
 		echo -e "${Info} 输入了不合法的邮箱，邮箱未修改成功 ..." && return 0
 		fi
 		fi
-	read -e -p "是否将邮箱地址与 EFF 共享？(默认:No):" yn
+	read -e -p "是否将邮箱地址与 EFF 共享？(Y/N 默认:N):" yn
 	  [[ -z "${yn}" ]] && yn="n"
 	  if [[ $yn == [Yy] ]]; then
 	  	echo -e "${Info} 已同意与 EFF 共享邮箱地址，将会收到 EFF 推送的新闻、活动等资讯(申请/续订证书后生效) ..."
@@ -494,16 +494,24 @@ Reset_v2fly(){
 		echo -e "${Info} 移除容器..."
 		docker-compose down
 		echo -e "${Info} done..."
-		rm -f ${config_file}
-		rm -rf $folder/logs
-		rm -rf $config_folder/v2ray/*
-		rm -rf $config_folder/nginx/conf.d/*
-		rm -rf $config_folder/certbot
-		rm -rf $config_folder/tls-old
-		rm -f $folder/docker-compose.yml
-		rm -f $folder/info.conf
-		echo && echo -e "${Info} 初始化已完成 !" && echo
 		cd ~
+		echo -e "${Info} 开始初始化 ..."
+		rm -f ${config_file}
+		rm -rf ${folder}/logs
+		rm -rf ${config_folder}
+		rm -f ${folder}/docker-compose.yml
+		rm -f ${folder}/info.conf
+		mkdir -p $config_folder/conf
+		mkdir -p $config_folder/v2ray
+		mkdir -p $config_folder/nginx/conf.d
+		mkdir -p $config_folder/nginx/html
+		curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/data/conf/config.json -o $config_folder/conf/config.json
+		curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/data/conf/docker-compose.yml -o $config_folder/conf/docker-compose.yml
+		curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/data/conf/info.conf -o $config_folder/conf/info.conf
+		curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/data/conf/nginx.conf -o $config_folder/conf/nginx.conf
+		curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/data/conf/index.html -o $config_folder/conf/index.html
+		cp $config_folder/conf/index.html $config_folder/nginx/html/index.html
+		echo && echo -e "${Info} 初始化已完成 !" && echo
 		echo -e "${Tip} 请等待5秒..."
 		sleep 5s && return 0
 	else
