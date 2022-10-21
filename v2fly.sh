@@ -13,7 +13,7 @@ export PATH
 sh_ver="1.0.0.1"
 Compose_ver="v2.12.0"
 PWD="/root"
-folder="$PWD/docker-v2fly"
+folder="$PWD/v2fly"
 config_folder="$folder/data"
 config_file="$folder/view_info.conf"
 uuid="$(cat /proc/sys/kernel/random/uuid)"
