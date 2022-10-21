@@ -571,7 +571,7 @@ Update_Compose(){
 	return 0
 }
 Update_Shell(){
-	curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/v2fly.sh -o v2fly.sh && chmod +x v2fly.sh && echo -e "${Info} 更新完成 ..."
+	curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/v2fly.sh -o v2fly.sh && echo -e "${Info} 更新完成 ..."
 	source v2fly.sh
 }
 
