@@ -285,6 +285,10 @@ Update_Service(){
 	cd $folder
 	docker-compose down
 	docker-compose pull
+	curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/data/conf/docker-compose.yml -o $config_folder/conf/docker-compose.yml
+	rm -f $folder/docker-compose.yml && cp $config_folder/conf/docker-compose.yml $folder/docker-compose.yml
+	source $folder/info.conf
+	sed -i "16s/your_ports/${ports}/" $folder/docker-compose.yml
 	echo -e "${Info} 更新完成，重启中 ..."
 	docker-compose up --force-recreate -d nginx v2ray
 	echo -e "${Info} done..."
