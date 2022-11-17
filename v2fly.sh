@@ -115,7 +115,7 @@ Install_v2fly(){
 		if [[ $yn == [Yy] ]]; then
 		echo -e "${Info} 已同意与 EFF 共享邮箱地址，将会收到 EFF 推送的新闻、活动等资讯..."
 		share_email_address="yes"
-	  else
+	  	else
 	  	echo && echo -e "${Info} 已拒绝与 EFF 共享邮箱地址，将不会收到 EFF 推送的新闻、活动等资讯..."
 		share_email_address="no"
 		fi
@@ -532,7 +532,7 @@ Configure_BBR(){
 echo -e "${Red_font_prefix} [开启前，请注意] ${Font_color_suffix}
 1. 本脚本仅支持 Debian / Ubuntu 系统
 2. 查看 BBR 状态若有返回 tcp_bbr 则已启用 BBR
-3. 启用 BBR 需系统内核支持，本脚本不更换内核，不存在更换失败等风险(重启后无法开机)" && echo
+3. 启用 BBR 需系统内核支持，本脚本不更换内核，不存在更换内核失败等风险(重启后无法开机)" && echo
 	read -e -p "(默认: 取消):" bbr_num
 	[[ -z "${bbr_num}" ]] && echo -e "${Info}已取消..." && return 1
 	if [[ ${bbr_num} == "1" ]]; then
@@ -554,6 +554,7 @@ Start_BBR(){
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 	sysctl -p
+	echo -e "${Info} done..."
 	lsmod | grep bbr
 }
 Update_Compose(){
