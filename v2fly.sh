@@ -45,7 +45,6 @@ check_sys(){
 	elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
 		release="centos"
     fi
-	bit=`uname -m`
 }
 Installation_dependency(){
 	echo -e "${Info} 开始创建必要文件..."
@@ -436,6 +435,7 @@ Uninstall_v2fly(){
 		cd $folder
 		echo -e "${Info} 移除容器..."
 		docker-compose down
+		cd ~
 		echo -e "${Info} done..."
 		rm -rf ${folder}
 		echo -e "${Info} 开始移除 compose..."
