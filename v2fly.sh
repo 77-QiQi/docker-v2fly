@@ -102,7 +102,7 @@ Install_v2fly(){
 	if [ -z $email ];then
 	    echo -e "${Info} 没有输入邮箱..." && email="unknown" && read -s -n1 -p "将自动跳过邮箱，按任意键继续..."
 		else
-		mail=`echo $email | gawk '/^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/{print $0}'`
+		mail=`echo $email | gawk '/^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,9})$/{print $0}'`
 		if [ ! -n "${mail}" ];then
 		echo -e "${Info} 输入了不合法的邮箱，将自动跳过 ..." && email="unknown"
 		fi
@@ -403,7 +403,7 @@ Email_Setting(){
 		if [ -z $new_email ];then
 	    echo -e "${Info} 没有输入邮箱..." && return 0
 		else
-		mail=`echo $new_email | gawk '/^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/{print $0}'`
+		mail=`echo $new_email | gawk '/^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,9})$/{print $0}'`
 		if [ ! -n "${mail}" ];then
 		echo -e "${Info} 输入了不合法的邮箱，邮箱未修改成功 ..." && return 0
 		fi
