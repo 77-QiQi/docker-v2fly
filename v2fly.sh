@@ -11,7 +11,7 @@ export PATH
 #=================================================
 
 sh_ver="1.0.0.1"
-Compose_ver="v2.12.2"
+Compose_ver="v2.13.0"
 PWD="/root"
 folder="$PWD/v2fly"
 config_folder="$folder/data"
@@ -139,6 +139,9 @@ Install_v2fly(){
 #	sed -i '15,24s/'"'"/'"''/g' $config_folder/v2ray/config.json
 	sed -i "33s/v2ray/${paths}/" $config_folder/nginx/conf.d/nginx.conf
 	sed -i "s/your_domain/${domains}/" $config_folder/nginx/conf.d/nginx.conf
+	if [ $ports == "443" ]; then
+	sed -i "/443:8443/d" $folder/docker-compose.yml
+	fi
 	sed -i "16s/your_ports/${ports}/" $folder/docker-compose.yml
 
 	touch $folder/check_info.conf
@@ -345,12 +348,20 @@ Ports_Setting(){
 		if [ -z $new_ports ];then
 		echo -e "${Error} 没有输入端口，已取消修改..." && return 0
 		fi
+		if [[ $new_ports == $ports ]]; then
+		echo
+		echo -e "${Error} 此为当前默认端口:${ports}，已取消修改..." && return 0
+		fi
 		if [[ $new_ports == "22" || $new_ports == "25" || $new_ports == "80" ]]; then
 		echo
 		echo -e "${Error} 端口不能为 22,25,80 ..." && return 0
 		fi
 	sed -i "3s/${ports}/${new_ports}/" $folder/info.conf
-	sed -i "16s/${ports}/${new_ports}/" $folder/docker-compose.yml
+	rm -f $folder/docker-compose.yml && cp $config_folder/conf/docker-compose.yml $folder/docker-compose.yml
+	if [ $new_ports == "443" ]; then
+	sed -i "/443:8443/d" $folder/docker-compose.yml
+	fi
+	sed -i "16s/your_ports/${new_ports}/" $folder/docker-compose.yml
 	sed -i "4s/${ports}/${new_ports}/" $folder/view_info.conf
 	cd $folder
 	docker-compose up --force-recreate -d nginx v2ray
