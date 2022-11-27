@@ -11,7 +11,7 @@ export PATH
 #=================================================
 
 sh_ver="1.0.0.1"
-Compose_ver="v2.13.0"
+compose_ver="v2.13.0"
 PWD="/root"
 folder="$PWD/v2fly"
 config_folder="$folder/data"
@@ -62,7 +62,7 @@ Installation_dependency(){
 	curl -fsSL https://get.docker.com -o get-docker.sh
 	sh get-docker.sh && rm -f get-docker.sh
 	echo -e "${Info} 开始下载/安装 docker-compose..."
-	curl -SL https://github.com/docker/compose/releases/download/${Compose_ver}/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+	curl -SL https://github.com/docker/compose/releases/download/${compose_ver}/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
 	docker-compose -v
 	return 0
@@ -290,6 +290,9 @@ Update_Service(){
 	curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/data/conf/docker-compose.yml -o $config_folder/conf/docker-compose.yml
 	rm -f $folder/docker-compose.yml && cp $config_folder/conf/docker-compose.yml $folder/docker-compose.yml
 	source $folder/info.conf
+	if [ $ports == "443" ]; then
+	sed -i "/443:8443/d" $folder/docker-compose.yml
+	fi
 	sed -i "16s/your_ports/${ports}/" $folder/docker-compose.yml
 	echo -e "${Info} 更新完成，重启中 ..."
 	docker-compose up --force-recreate -d nginx v2ray
@@ -580,7 +583,7 @@ Update_Compose(){
 	echo -e "${Info} 开始移除 docker-compose..."
 	rm -rf /usr/local/bin/docker-compose
 	echo -e "${Info} 开始下载/安装 docker-compose..."
-	curl -SL https://github.com/docker/compose/releases/download/${Compose_ver}/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+	curl -SL https://github.com/docker/compose/releases/download/${compose_ver}/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
 	docker-compose -v
 	echo -e "${Info}docker-compose 已更新，重启中 ..."
