@@ -137,7 +137,7 @@ Install_v2fly(){
 #	sed -i "/"id"/c\            '"id"': '"${uuid}"'," $config_folder/v2ray/config.json
 #	sed -i "/"path"/c\          '"path"': '"${paths}"'" $config_folder/v2ray/config.json
 #	sed -i '15,24s/'"'"/'"''/g' $config_folder/v2ray/config.json
-	sed -i "33s/v2ray/${paths}/" $config_folder/nginx/conf.d/nginx.conf
+	sed -i "34s/v2ray/${paths}/" $config_folder/nginx/conf.d/nginx.conf
 	sed -i "s/your_domain/${domains}/" $config_folder/nginx/conf.d/nginx.conf
 	if [ $ports == "443" ]; then
 	sed -i "/443:8443/d" $folder/docker-compose.yml
@@ -386,7 +386,7 @@ Paths_Setting(){
 	    esac
 	sed -i "6s/${paths}/${new_paths}/" $folder/info.conf
 	sed -i "24s/${paths}/${new_paths}/" $config_folder/v2ray/config.json
-	sed -i "33s/${paths}/${new_paths}/" $config_folder/nginx/conf.d/nginx.conf
+	sed -i "34s/${paths}/${new_paths}/" $config_folder/nginx/conf.d/nginx.conf
 	sed -i "10s/${paths}/${new_paths}/" $folder/view_info.conf
 	cd $folder
 	docker-compose up --force-recreate -d nginx v2ray
