@@ -11,7 +11,7 @@ export PATH
 #=================================================
 
 sh_ver="1.0.0.1"
-compose_ver="v2.14.2"
+compose_ver="v2.15.0"
 PWD="/root"
 folder="$PWD/v2fly"
 config_folder="$folder/data"
@@ -425,10 +425,10 @@ Email_Setting(){
 	read -e -p "是否将邮箱地址与 EFF 共享？(Y/N 默认:N):" yn
 	  [[ -z "${yn}" ]] && yn="n"
 	  if [[ $yn == [Yy] ]]; then
-	  	echo -e "${Info} 已同意与 EFF 共享邮箱地址，将会收到 EFF 推送的新闻、活动等资讯(申请/续订证书后生效) ..."
+	  	echo -e "${Info} 已同意与 EFF 共享邮箱地址，将会收到 EFF 推送的新闻、活动等资讯 ..."
 	  	share_email="yes"
 	  else
-	  	echo && echo -e "${Info} 已拒绝与 EFF 共享邮箱地址，将不会收到 EFF 推送的新闻、活动等资讯(申请/续订证书后生效) ..."
+	  	echo && echo -e "${Info} 已拒绝与 EFF 共享邮箱地址，将不会收到 EFF 推送的新闻、活动等资讯 ..."
 		share_email="no"
 	  fi
 	sed -i "11s/${share_email_address}/${share_email}/" $folder/info.conf
