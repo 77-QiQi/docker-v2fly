@@ -11,7 +11,7 @@ export PATH
 #=================================================
 
 sh_ver="1.0.0.1"
-compose_ver="v2.15.0"
+compose_ver="v2.15.1"
 PWD="/root"
 folder="$PWD/v2fly"
 config_folder="$folder/data"
