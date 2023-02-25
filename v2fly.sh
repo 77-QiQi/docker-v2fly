@@ -596,6 +596,9 @@ Update_Shell(){
 	curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/v2fly.sh -o v2fly.sh && echo -e "${Info} 更新完成 ..."
 	source v2fly.sh
 }
+Ban_Iptables(){
+	bash <(curl -s -L https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/ban_iptables.sh)
+}
 
 check_sys
 [[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} = "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && return 1
@@ -620,10 +623,12 @@ echo -e "  v2ray 一键管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_s
 ————————————
  ${Green_font_prefix}11.${Font_color_suffix} 初始化 ...
  ${Green_font_prefix}12.${Font_color_suffix} 升级脚本 ...
+————————————
+ ${Green_font_prefix}13.${Font_color_suffix} 封禁/解封 ...
  "
 echo -e "${Red_font_prefix} [注意：首次安装及卸载重装，请先执行安装依赖！] ${Font_color_suffix}"
 echo -e "${Red_font_prefix} [注意：初始化，将恢复至 v2fly 安装之前(依赖安装之后)的状态！] ${Font_color_suffix}"
-echo && read -e -p "请输入数字 [0-12]：" num
+echo && read -e -p "请输入数字 [0-13]：" num
 case "$num" in
 	0)
 	Installation_dependency
@@ -664,7 +669,10 @@ case "$num" in
 	12)
 	Update_Shell
 	;;
+	13)
+	Ban_Iptables
+	;;
 	*)
-	echo -e "${Error} 请输入正确的数字 [0-12]"
+	echo -e "${Error} 请输入正确的数字 [0-13]"
 	;;
 esac
