@@ -597,7 +597,7 @@ Update_Shell(){
 	source v2fly.sh
 }
 Ban_Iptables(){
-	bash <(curl -s -L https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/ban_iptables.sh)
+	bash <(curl -s -L https://raw.githubusercontent.com/77-QiQi/ban-iptables/main/ban_iptables.sh)
 }
 
 check_sys
