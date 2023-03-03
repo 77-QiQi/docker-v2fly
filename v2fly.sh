@@ -558,7 +558,6 @@ echo -e "${Red_font_prefix} [开启前，请注意] ${Font_color_suffix}
 	fi
 }
 BBR_Status(){
-	[[ ${release} = "centos" ]] && echo -e "${Error} 本脚本不支持 CentOS系统安装 BBR !" && return 1
 	lsmod | grep bbr
 }
 Start_BBR(){
@@ -601,7 +600,7 @@ Ban_Iptables(){
 }
 
 check_sys
-[[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} = "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && return 1
+[[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && return 1
 check_root
 echo -e "  v2ray 一键管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
   ---- 77-QiQi | github.com/77-QiQi ----
