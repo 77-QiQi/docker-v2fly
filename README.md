@@ -8,7 +8,7 @@
 ```
 apt-get update && apt-get upgrade -y
 
-apt-get install curl iptables gawk -y
+apt-get install curl iptables -y
 
 curl https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/v2fly.sh -o v2fly.sh
 
