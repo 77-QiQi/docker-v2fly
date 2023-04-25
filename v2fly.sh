@@ -337,7 +337,7 @@ Update_Setting(){
 Domains_Setting(){
 	read -r -p "请输入域名(当前域名:${domains}):" new_domains
 		if [ -z $new_domains ];then
-	    echo -e "${Error} 没有输入域名，已取消修改..." && return 0
+	    	echo -e "${Error} 没有输入域名，已取消修改..." && return 0
 		fi
 	sed -i "s/${domains}/${new_domains}/" $folder/info.conf
 	sed -i "s/${domains}/${new_domains}/" $config_folder/nginx/conf.d/nginx.conf
@@ -374,16 +374,16 @@ Ports_Setting(){
 Paths_Setting(){
 	read -r -p "请输入路径(当前路径:${paths}):" new_paths
 		if [ -z $new_paths ];then
-	    echo -e "${Error} 没有输入路径，已取消修改..." && return 0
+	    	echo -e "${Error} 没有输入路径，已取消修改..." && return 0
 		fi
 		case $new_paths in
-	    *[/$]*)
-	    echo
-	    echo -e "${Error} 这个脚本太辣鸡了...所以路径不能包含 / 或 $ 这两个符号..."
-	    echo "----------------------------------------------------------------"
-	    return 0
-	    ;;
-	    esac
+	    	*[/$]*)
+	    	echo
+	    	echo -e "${Error} 这个脚本太辣鸡了...所以路径不能包含 / 或 $ 这两个符号..."
+	    	echo "----------------------------------------------------------------"
+	    	return 0
+	    	;;
+	    	esac
 	sed -i "6s/${paths}/${new_paths}/" $folder/info.conf
 	sed -i "24s/${paths}/${new_paths}/" $config_folder/v2ray/config.json
 	sed -i "34s/${paths}/${new_paths}/" $config_folder/nginx/conf.d/nginx.conf
@@ -397,10 +397,19 @@ uuid_Setting(){
 	read -e -p "确认修改UUID？[y/N] :" yn
 	  [[ -z "${yn}" ]] && yn="n"
 	  if [[ $yn == [Yy] ]]; then
+	  	read -e -p "是否指定UUID？[y/N] :" yn
+		[[ -z "${yn}" ]] && yn="n"
+		if [[ $yn == [Yy] ]]; then
+		read -r -p "请输入UUID(当前UUID:${uuid}):" new_uuid
+		if [ -z $new_uuid ];then
+		echo -e "${Error} 没有输入UUID，已取消修改..." && return 0
+		fi
+		else
 	  	new_uuid="$(cat /proc/sys/kernel/random/uuid)"
-	  	echo
-	  	read -s -n1 -p "UUID已自动生成，按任意键继续..."
 		echo
+		read -s -n1 -p "UUID已自动生成，按任意键继续..."
+		echo
+		fi
 	  else
 		echo && echo -e "${Info} 默认不修改UUID" && return 0
 	  fi
@@ -410,12 +419,12 @@ uuid_Setting(){
 	cd $folder
 	docker-compose up --force-recreate -d nginx v2ray
 	cd ~
-	return 0
+	echo && echo -e "${Info} 修改完成" && return 0
 }
 Email_Setting(){
 	read -r -p "请输入邮箱(当前邮箱:${email}):" new_email
 		if [ -z $new_email ];then
-	    echo -e "${Info} 没有输入邮箱..." && return 0
+	    	echo -e "${Info} 没有输入邮箱..." && return 0
 		else
 		mail=`echo $new_email | awk '/^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,9})$/{print $0}'`
 		if [ ! -n "${mail}" ];then
