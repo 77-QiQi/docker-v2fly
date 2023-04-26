@@ -75,7 +75,7 @@ Install_v2fly(){
 	  return 1
 	fi
 	echo -e "${Info} 开始设置 v2fly 配置..."
-	read -r -p "请输入域名(eg:www.domain.com):" domains
+	read -e -p "请输入域名(eg:www.domain.com):" domains
 	if [ -z $domains ];then
 	    echo -e "${Error} 没有输入域名，已终止..." && return 0
 	fi
@@ -85,7 +85,7 @@ Install_v2fly(){
 	    echo
 	    echo -e "${Error} 端口不能为 22,25,80 ..." && return 0
 	fi
-	read -r -p "请输入路径(eg:v2ray):" paths
+	read -e -p "请输入路径(eg:v2ray):" paths
 	if [ -z $paths ];then
 	    echo -e "${Error} 没有输入路径，已终止..." && return 0
 	else
@@ -98,9 +98,9 @@ Install_v2fly(){
 	    ;;
 	    esac
 	fi
-	read -r -p "请输入邮箱(eg:your@address.email):" email
-	if [ -z $email ];then
-	    echo -e "${Info} 没有输入邮箱..." && email="unknown" && read -s -n1 -p "将自动跳过邮箱，按任意键继续..."
+	read -e -p "请输入邮箱(eg:your@address.email):" email
+		if [ -z $email ];then
+	    	echo -e "${Info} 没有输入邮箱..." && email="unknown" && read -s -n1 -p "将自动跳过邮箱，按任意键继续..."
 		else
 		mail=`echo $email | awk '/^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,9})$/{print $0}'`
 		if [ ! -n "${mail}" ];then
@@ -335,7 +335,7 @@ Update_Setting(){
 	fi
 }
 Domains_Setting(){
-	read -r -p "请输入域名(当前域名:${domains}):" new_domains
+	read -e -p "请输入域名(当前域名:${domains}):" new_domains
 		if [ -z $new_domains ];then
 	    	echo -e "${Error} 没有输入域名，已取消修改..." && return 0
 		fi
@@ -347,7 +347,7 @@ Domains_Setting(){
 	return 0
 }
 Ports_Setting(){
-	read -r -p "请输入端口号(当前默认端口:${ports}):" new_ports
+	read -e -p "请输入端口号(当前默认端口:${ports}):" new_ports
 		if [ -z $new_ports ];then
 		echo -e "${Error} 没有输入端口，已取消修改..." && return 0
 		fi
@@ -372,7 +372,7 @@ Ports_Setting(){
 	return 0
 }
 Paths_Setting(){
-	read -r -p "请输入路径(当前路径:${paths}):" new_paths
+	read -e -p "请输入路径(当前路径:${paths}):" new_paths
 		if [ -z $new_paths ];then
 	    	echo -e "${Error} 没有输入路径，已取消修改..." && return 0
 		fi
@@ -400,7 +400,7 @@ uuid_Setting(){
 	  	read -e -p "是否指定UUID？[y/N] :" yn
 		[[ -z "${yn}" ]] && yn="n"
 		if [[ $yn == [Yy] ]]; then
-		read -r -p "请输入UUID(当前UUID:${uuid}):" new_uuid
+		read -e -p "请输入UUID(当前UUID:${uuid}):" new_uuid
 		if [ -z $new_uuid ];then
 		echo -e "${Error} 没有输入UUID，已取消修改..." && return 0
 		fi
@@ -422,7 +422,7 @@ uuid_Setting(){
 	echo && echo -e "${Info} 修改完成" && return 0
 }
 Email_Setting(){
-	read -r -p "请输入邮箱(当前邮箱:${email}):" new_email
+	read -e -p "请输入邮箱(当前邮箱:${email}):" new_email
 		if [ -z $new_email ];then
 	    	echo -e "${Info} 没有输入邮箱..." && return 0
 		else
