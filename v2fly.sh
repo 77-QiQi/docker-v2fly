@@ -197,6 +197,7 @@ Install_tls(){
 	  echo -e "${Info} loading..."
 	  mkdir -p "$data_path/conf"
 	  curl -s https://raw.githubusercontent.com/77-QiQi/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "$data_path/conf/options-ssl-nginx.conf"
+	  curl -s https://raw.githubusercontent.com/77-QiQi/docker-v2fly/main/data/conf/options-setting.conf > "$data_path/conf/options-setting.conf"
 	  openssl dhparam -out "$data_path/conf/ssl-dhparams.pem" 2048
 	  echo -e "${Info} ready..."
 	fi
