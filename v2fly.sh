@@ -90,9 +90,9 @@ Install_v2fly(){
 	    echo -e "${Error} 没有输入路径，已终止..." && return 0
 	else
 	    case $paths in
-	    *[/$]*)
+	    *[?？/$]*)
 	    echo
-	    echo -e "${Error} 这个脚本太辣鸡了...所以路径不能包含 / 或 $ 这两个符号..."
+	    echo -e "${Error} 这个脚本太辣鸡了...所以路径不能包含 ? / 或 $ 符号..."
 	    echo "----------------------------------------------------------------"
 	    return 0
 	    ;;
@@ -157,7 +157,7 @@ Install_v2fly(){
 	echo "加密方式（security）：auto"  >> $folder/check_info.conf
 	echo "传输协议（network）：ws"  >> $folder/check_info.conf
 	echo "伪装类型（type）：none"  >> $folder/check_info.conf
-	echo "路径（path）：/${paths}"  >> $folder/check_info.conf
+	echo "路径（path）：/${paths}?ed=2048"  >> $folder/check_info.conf
 	echo "底层传输安全：TLS"  >> $folder/check_info.conf
 	echo "====================================="  >> $folder/check_info.conf
 
@@ -378,9 +378,9 @@ Paths_Setting(){
 	    	echo -e "${Error} 没有输入路径，已取消修改..." && return 0
 		fi
 		case $new_paths in
-	    	*[/$]*)
+	    	*[?？/$]*)
 	    	echo
-	    	echo -e "${Error} 这个脚本太辣鸡了...所以路径不能包含 / 或 $ 这两个符号..."
+	    	echo -e "${Error} 这个脚本太辣鸡了...所以路径不能包含 ? / 或 $ 符号..."
 	    	echo "----------------------------------------------------------------"
 	    	return 0
 	    	;;
