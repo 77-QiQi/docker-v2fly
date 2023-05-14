@@ -388,7 +388,7 @@ Paths_Setting(){
 	sed -i "6s/${paths}/${new_paths}/" $folder/info.conf
 	sed -i "24s/${paths}/${new_paths}/" $config_folder/v2ray/config.json
 	sed -i "34s/${paths}/${new_paths}/" $config_folder/nginx/conf.d/nginx.conf
-	sed -i "10s/${paths}/${new_paths}?ed=2048/" $folder/view_info.conf
+	sed -i "10s/${paths}?ed=2048/${new_paths}?ed=2048/" $folder/view_info.conf
 	cd $folder
 	docker-compose up --force-recreate -d nginx v2ray
 	cd ~
