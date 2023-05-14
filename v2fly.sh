@@ -13,7 +13,7 @@ export PATH
 sh_ver="1.0.0.1"
 compose_ver="v2.17.3"
 PWD="/root"
-folder="$PWD/v2fly"
+folder="$PWD/V2Fly"
 config_folder="$folder/data"
 config_file="$folder/view_info.conf"
 uuid="$(cat /proc/sys/kernel/random/uuid)"
@@ -388,7 +388,7 @@ Paths_Setting(){
 	sed -i "6s/${paths}/${new_paths}/" $folder/info.conf
 	sed -i "24s/${paths}/${new_paths}/" $config_folder/v2ray/config.json
 	sed -i "34s/${paths}/${new_paths}/" $config_folder/nginx/conf.d/nginx.conf
-	sed -i "10s/${paths}/${new_paths}/" $folder/view_info.conf
+	sed -i "10s/${paths}/${new_paths}?ed=2048/" $folder/view_info.conf
 	cd $folder
 	docker-compose up --force-recreate -d nginx v2ray
 	cd ~
