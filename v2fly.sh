@@ -465,7 +465,7 @@ Uninstall_v2fly(){
 		echo -e "${Info} 开始移除 compose..."
 		rm -rf /usr/local/bin/docker-compose
 		echo -e "${Info} 开始移除 docker..."
-		apt-get purge docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+		apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras -y
 		rm -rf /var/lib/docker
 		rm -rf /var/lib/containerd
 		echo && echo -e "${Info} 卸载已完成 !" && echo
