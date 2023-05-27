@@ -11,7 +11,6 @@ export PATH
 #=================================================
 
 sh_ver="1.0.0.1"
-compose_ver="v2.18.1"
 PWD="/root"
 folder="$PWD/V2Fly"
 config_folder="$folder/data"
@@ -62,7 +61,7 @@ Installation_dependency(){
 	curl -fsSL https://get.docker.com -o get-docker.sh
 	sh get-docker.sh && rm -f get-docker.sh
 	echo -e "${Info} 开始下载/安装 docker-compose..."
-	curl -SL https://github.com/docker/compose/releases/download/${compose_ver}/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+	curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
 	docker-compose -v
 	return 0
@@ -592,7 +591,7 @@ Update_Compose(){
 	echo -e "${Info} 开始移除 docker-compose..."
 	rm -rf /usr/local/bin/docker-compose
 	echo -e "${Info} 开始下载/安装 docker-compose..."
-	curl -SL https://github.com/docker/compose/releases/download/${compose_ver}/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+	curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
 	docker-compose -v
 	echo -e "${Info}docker-compose 已更新，重启中 ..."
